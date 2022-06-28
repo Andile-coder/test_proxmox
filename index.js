@@ -12,10 +12,16 @@ const Test = async () => {
     //get qemu of all nodes
     async function getQemu() {
       for (let i = 0; i < nodes?.data?.length; i++) {
-        const item = (
-          await client.nodes.get("test-prox").qemu.get(103).config.vmConfig()
+        const qemus = (
+          await client.nodes.get(nodes.data[i].node).qemu.vmlist(0)
         ).response;
-        configured.push(item);
+
+        for (let j = 0; j < qemus.data.length; j++) {
+          const item = (
+            await client.nodes.get("test-prox").qemu.get(103).config.vmConfig()
+          ).response;
+          configured.push(item);
+        }
       }
 
       return configured;
