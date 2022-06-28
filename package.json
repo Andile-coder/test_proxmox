@@ -1,0 +1,7 @@
+{
+  "dependencies": {
+    "@corsinvest/cv4pve-api-javascript": "^7.2.1",
+    "axios": "^0.27.2",
+    "dotenv": "^16.0.1"
+  }
+}
