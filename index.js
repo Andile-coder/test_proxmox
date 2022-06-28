@@ -7,29 +7,25 @@ const Test = async () => {
   if (login) {
     console.log("login", login);
     //get nodes
-    const nodez = (await client.nodes.index()).response;
-
+    const nodes = (await client.nodes.index()).response;
+    const configured = [];
     //get qemu of all nodes
-    const getQemu = async () => {
-      const configuredQemu = [];
-      for (let i = 0; i < nodez.data.length; i++) {
-        const qemus = (
-          await client.nodes.get(nodez.data[i].node).qemu.vmlist(0)
+    async function getQemu() {
+      for (let i = 0; i < nodes?.data?.length; i++) {
+        const item = (
+          await client.nodes.get("test-prox").qemu.get(103).config.vmConfig()
         ).response;
-
-        qemus?.data?.forEach(async (elem) => {
-          const item = await client.nodes
-            .get(nodez.data[i].node)
-            .qemu.get(elem.vmid)
-            .config.vmConfig().response;
-          configuredQemu.concat(item);
-        });
+        configured.push(item);
       }
-      return configuredQemu;
-    };
 
-    const test = getQemu();
-    console.log("test", test);
+      return configured;
+    }
+
+    const secondFoo = async () => {
+      const result = await getQemu();
+      console.log(result);
+    };
+    secondFoo();
   }
 };
 
