@@ -44,3 +44,5 @@ const getNets = () => {
     return { ...vm, networks: nets[index] };
   });
 };
+
+const getNets1 = () => {};
