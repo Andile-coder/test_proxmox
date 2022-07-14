@@ -1,5 +1,7 @@
 const vms = require("./vms.json");
 const containers = require("./containers.json");
+const fs = require("fs");
+
 //how many networks each vm
 
 const getNets = (instance) => {
@@ -47,7 +49,21 @@ const getNets = (instance) => {
   const newInstance = instance.map((vm, index) => {
     return { ...vm, networks: nets[index] };
   });
-  console.log(newInstance[0]);
+  return newInstance;
 };
 
-getNets(containers);
+const jsonFilecreator = (data, fileName) => {
+  try {
+    const stringifyData = JSON.stringify(data);
+    fs.writeFile(`${fileName}.json`, stringifyData, (err) => {
+      if (err) {
+        throw err;
+      } else {
+        console.log(`${fileName} has been saved`);
+      }
+    });
+  } catch (e) {
+    console.log(e);
+  }
+};
+jsonFilecreator(getNets(containers), "containers");

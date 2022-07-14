@@ -1,5 +1,7 @@
 const vms = require("./vms.json");
 const containers = require("./containers.json");
+const fs = require("fs");
+
 const getStorage = (instance) => {
   let storageCount = [];
   let storages = [];
@@ -13,18 +15,18 @@ const getStorage = (instance) => {
         count++;
         value = value.toString();
         let net1 = value.split(",").map((elem) => elem.split("="));
-        net1[0] = net1[0].join("").split(":")[0];
+        net1[0] = net1[0].join("").split(":");
         let net2 = {};
         net1.forEach((elem) => {
           switch (elem[0]) {
             case "size":
               net2 = { ...net2, size: elem[1] };
               break;
-            case "Mwhdd":
-              net2 = { ...net2, Mwhdd: elem[1] };
+            case "MWhdd":
+              net2 = { ...net2, name: "MWhdd" };
               break;
             case "local-zfs":
-              net2 = { ...net2, local_zfs: elem[1] };
+              net2 = { ...net2, name: "local-zfs" };
               break;
           }
         });
@@ -40,6 +42,22 @@ const getStorage = (instance) => {
   const newInstance = instance.map((vm, index) => {
     return { ...vm, Storage: storages[index] };
   });
-  console.log(newInstance);
+  return newInstance;
 };
-getStorage(containers);
+// getStorage(containers);
+const jsonFilecreator = (data, fileName) => {
+  try {
+    const stringifyData = JSON.stringify(data);
+    fs.writeFile(`${fileName}.json`, stringifyData, (err) => {
+      if (err) {
+        throw err;
+      } else {
+        console.log(`${fileName} has been saved`);
+      }
+    });
+  } catch (e) {
+    console.log(e);
+  }
+};
+jsonFilecreator(getStorage(containers), "containers");
+jsonFilecreator(getStorage(vms), "vms");

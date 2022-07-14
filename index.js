@@ -20,31 +20,37 @@ const Test = async () => {
     //get all pools
     const getPools = async () => {
       const pools = (await client.pools.index()).response;
-      for (let i = 0; i < pools.data; i++) {
+
+      for (let i = 0; i < pools.data.length; i++) {
         let pool = (await client.pools.get(pools.data[i].poolid).readPool())
           .response;
         pool = { ...pool.data, poolid: pools.data[i].poolid };
         configuredPools.push(pool);
       }
+
       return configuredPools;
     };
     //get qemu of all nodes
     async function getQemu() {
       for (let i = 0; i < nodes?.data?.length; i++) {
+        //get al qemus
         const qemu = (await client.nodes.get(nodes.data[i].node).qemu.vmlist(0))
           .response;
-
         for (let j = 0; j < qemu.data.length; j++) {
+          //configure  returned qemus
           let item = (
             await client.nodes
               .get(nodes.data[i].node)
               .qemu.get(qemu.data[j].vmid)
               .config.vmConfig()
           ).response;
+          //add missing attributes status,vmid,node,type
           item = {
             ...item.data,
             status: qemu.data[j]?.status,
             vmid: qemu.data[j]?.vmid,
+            node: nodes.data[i].id,
+            type: "qemu",
           };
           configuredQemu.push(item);
         }
@@ -67,6 +73,8 @@ const Test = async () => {
             ...item.data,
             status: lxc.data[j]?.status,
             vmid: lxc.data[j]?.vmid,
+            node: nodes.data[i].id,
+            type: "lxc",
           };
 
           configuredLxc.push(item);
@@ -99,7 +107,7 @@ const Test = async () => {
       jsonFilecreator(qemu, "vms");
       jsonFilecreator(lxc, "containers");
       jsonFilecreator(pools, "pools");
-      // jsonFilecreator(nodes, "nodes");
+      jsonFilecreator(nodes, "nodes");
     };
     runner();
   } else {
