@@ -1,13 +1,12 @@
 const vms = require("./vms.json");
-
-console.log(vms);
+const containers = require("./containers.json");
 //how many networks each vm
 
-const getNets = () => {
+const getNets = (instance) => {
   let networkCount = [];
   let nets = [];
 
-  vms.forEach((vm) => {
+  instance.forEach((vm) => {
     let count = 0;
     let tempNets = [];
     for (const [key, value] of Object.entries(vm)) {
@@ -29,6 +28,11 @@ const getNets = () => {
             case "e1000":
               net2 = { ...net2, e1000: elem[1] };
               break;
+            case "hwaddr":
+              net2 = { ...net2, hwaddr: elem[1] };
+              break;
+            case "ip":
+              net2 = { ...net2, ip: elem[1] };
           }
         });
 
@@ -40,9 +44,10 @@ const getNets = () => {
     nets.push(tempNets);
   });
 
-  const newVms = vms.map((vm, index) => {
+  const newInstance = instance.map((vm, index) => {
     return { ...vm, networks: nets[index] };
   });
+  console.log(newInstance[0]);
 };
 
-const getNets1 = () => {};
+getNets(containers);

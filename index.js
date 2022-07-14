@@ -20,7 +20,7 @@ const Test = async () => {
     //get all pools
     const getPools = async () => {
       const pools = (await client.pools.index()).response;
-      for (let i = 0; i < pools.data?.length; i++) {
+      for (let i = 0; i < pools.data; i++) {
         let pool = (await client.pools.get(pools.data[i].poolid).readPool())
           .response;
         pool = { ...pool.data, poolid: pools.data[i].poolid };
@@ -84,7 +84,7 @@ const Test = async () => {
           if (err) {
             throw err;
           } else {
-            console.log("file has been saved");
+            console.log(`${fileName} has been saved`);
           }
         });
       } catch (e) {
